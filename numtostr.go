@@ -10,7 +10,7 @@ import (
 )
 
 var Analyzer = &analysis.Analyzer{
-	Name: "numstr",
+	Name: "numtostr",
 	Doc:  Doc,
 	Run:  run,
 	Requires: []*analysis.Analyzer{
