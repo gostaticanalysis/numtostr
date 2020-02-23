@@ -54,24 +54,21 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			}
 
 			// check all arguments are numerical
-			numOnly := true
-			for _, arg := range n.Args {
-				v := pass.TypesInfo.TypeOf(arg)
-				switch v.String() {
-				case "int", "int8", "int32", "int64":
-				case "uint", "uint8", "uint16", "uint32", "uint64":
-				case "float32", "float64":
-					continue
-				default:
-					numOnly = false
-					break
-				}
-			}
-			if numOnly {
+			if isAllNumber(pass, n.Args) {
 				pass.Reportf(caller.Pos(), "don't use fmt.Sprint to convert number to string. Use strconv.Itoa.")
 			}
 		}
 	})
 
 	return nil, nil
+}
+
+func isAllNumber(pass *analysis.Pass, args []ast.Expr) bool {
+	for _, arg := range args {
+		v := pass.TypesInfo.TypeOf(arg)
+		if !types.Identical(v, types.Typ[types.Int]) {
+			return false
+		}
+	}
+	return true
 }
